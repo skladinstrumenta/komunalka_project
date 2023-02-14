@@ -4,7 +4,8 @@ from django.db import models
 
 class MyUser(AbstractUser):
     email = models.EmailField(max_length=100, unique=True)
-    adress = models.ManyToManyField('Adress', related_name="adress_of_user", verbose_name="Адрес")
+    adress = models.ManyToManyField('Adress', related_name="adress_of_user", verbose_name="Адрес",
+                                    null=True, blank=True)
 
     class Meta:
         ordering = ['username']
@@ -40,14 +41,23 @@ class Adress(models.Model):
             return f"{self.country}, {self.city}, {self.street}, {self.house}"
 
 
-# class KomunalData(models.Model):
-#     gas = models.PositiveIntegerField(float=True)
-#     water = models.PositiveIntegerField(float=True)
-#     light = models.PositiveIntegerField(float=True)
-#     user = models.ForeignKey(MyUser, related_name='users_komdata', verbose_name='Пользователь',
-#                              on_delete=models.CASCADE)
-#     date_create = models.DateTimeField(auto_now_add=True)
-#     date_create = models.DateTimeField(auto_now_add=True)
+class KomunalData(models.Model):
+    gas = models.PositiveIntegerField()
+    water = models.PositiveIntegerField()
+    light = models.PositiveIntegerField()
+    adress = models.ForeignKey(Adress, related_name='adress_komunaldata', verbose_name='Адрес',
+                             on_delete=models.CASCADE)
+    date_create = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['date_update', 'date_create']
+        verbose_name_plural = "Показания счётчиков"
+
+    def __str__(self):
+        return f'{self.date_create.date()} - ' \
+               f'{self.adress.city}/{self.adress.street}/{self.adress.house}' \
+               f'-{self.adress.corps if self.adress.corps else ""}' \
+               f'/кв{self.adress.room} ' \
 
 
