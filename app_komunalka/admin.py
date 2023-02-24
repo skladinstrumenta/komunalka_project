@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app_komunalka.models import MyUser, Adress
+from app_komunalka.models import MyUser, Adress, KomunalData
 
 
 class ChooseAdressesAdmin(admin.ModelAdmin):
@@ -13,6 +13,7 @@ class ChooseUsersAdmin(admin.ModelAdmin):
 
 admin.site.register(MyUser, ChooseAdressesAdmin)
 admin.site.register(Adress, ChooseUsersAdmin)
+admin.site.register(KomunalData)
 
 
 
