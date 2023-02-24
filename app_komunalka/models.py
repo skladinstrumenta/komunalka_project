@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
@@ -24,6 +25,15 @@ class Adress(models.Model):
     corps = models.CharField(max_length=3, blank=True, null=True)
     room = models.CharField(max_length=10, blank=True, null=True)
     user = models.ManyToManyField(MyUser, related_name='users_adress', blank=True, null=True)
+    tarif_gas = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    tarif_delivery_gas = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    tarif_water = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    tarif_light = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    tarif_musor = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    tarif_obsg = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    date_create = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
+
 
     class Meta:
         ordering = ['country', 'city', 'street', 'house', 'corps', 'room']
@@ -58,6 +68,6 @@ class KomunalData(models.Model):
         return f'{self.date_create.date()} - ' \
                f'{self.adress.city}/{self.adress.street}/{self.adress.house}' \
                f'-{self.adress.corps if self.adress.corps else ""}' \
-               f'/кв{self.adress.room} ' \
+               f'/кв{self.adress.room if self.adress.room else ""} '
 
 
