@@ -5,8 +5,7 @@ from django.db import models
 
 class MyUser(AbstractUser):
     email = models.EmailField(max_length=100, unique=True)
-    adress = models.ManyToManyField('Adress', related_name="adress_of_user", verbose_name="Адрес",
-                                    null=True, blank=True)
+    adress = models.ManyToManyField('Adress', related_name="adress_of_user", verbose_name="Адрес")
 
     class Meta:
         ordering = ['username']
@@ -24,15 +23,15 @@ class Adress(models.Model):
     house = models.CharField(max_length=10)
     corps = models.CharField(max_length=3, blank=True, null=True)
     room = models.CharField(max_length=10, blank=True, null=True)
-    user = models.ManyToManyField(MyUser, related_name='users_adress', blank=True, null=True)
+    user = models.ManyToManyField(MyUser, related_name='users_adress')
     tarif_gas = models.FloatField(validators=[MinValueValidator(0)], default=1)
     tarif_delivery_gas = models.FloatField(validators=[MinValueValidator(0)], default=1)
     tarif_water = models.FloatField(validators=[MinValueValidator(0)], default=1)
     tarif_light = models.FloatField(validators=[MinValueValidator(0)], default=1)
     tarif_musor = models.FloatField(validators=[MinValueValidator(0)], default=1)
     tarif_obsg = models.FloatField(validators=[MinValueValidator(0)], default=1)
-    date_create = models.DateTimeField(auto_now_add=True)
-    date_update = models.DateTimeField(auto_now=True)
+    date_create_adress = models.DateTimeField(auto_now_add=True)
+    date_update_adress = models.DateTimeField(auto_now=True)
 
 
     class Meta:
