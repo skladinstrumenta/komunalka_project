@@ -4,8 +4,9 @@ from django.db import models
 
 
 class MyUser(AbstractUser):
+    username = models.CharField(max_length=100, blank=True, null=True, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    adress = models.ManyToManyField('Adress', related_name="adress_of_user", verbose_name="Адрес")
+    # adress = models.ManyToManyField('Adress', related_name="adress_of_user", verbose_name="Адрес")
 
     class Meta:
         ordering = ['username']
@@ -13,7 +14,7 @@ class MyUser(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return self.username
+        return self.email
 
 
 class Adress(models.Model):
@@ -30,9 +31,9 @@ class Adress(models.Model):
     tarif_light = models.FloatField(validators=[MinValueValidator(0)], default=1)
     tarif_musor = models.FloatField(validators=[MinValueValidator(0)], default=1)
     tarif_obsg = models.FloatField(validators=[MinValueValidator(0)], default=1)
+    debt = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     date_create_adress = models.DateTimeField(auto_now_add=True)
     date_update_adress = models.DateTimeField(auto_now=True)
-
 
     class Meta:
         ordering = ['country', 'city', 'street', 'house', 'corps', 'room']
@@ -55,9 +56,12 @@ class KomunalData(models.Model):
     water = models.PositiveIntegerField()
     light = models.PositiveIntegerField()
     adress = models.ForeignKey(Adress, related_name='adress_komunaldata', verbose_name='Адрес',
-                             on_delete=models.CASCADE)
+                               on_delete=models.CASCADE)
+    komunaldata_dateon = models.DateField(verbose_name="Дата начала начисления")
+    komunaldata_dateoff = models.DateField(verbose_name="Дата завершения начисления")
     date_create = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
+    result = models.FloatField(blank=True, null=True, verbose_name="Итого, грн")
 
     class Meta:
         ordering = ['date_update', 'date_create']
@@ -70,3 +74,11 @@ class KomunalData(models.Model):
                f'/кв{self.adress.room if self.adress.room else ""} '
 
 
+class Repayment(models.Model):
+    adress = models.ForeignKey(Adress, verbose_name='Aдрес', on_delete=models.CASCADE)
+    summ_of_repayment = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    date_of_repayment = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date_of_repayment']
+        verbose_name_plural = "Погашения задолженностей"
