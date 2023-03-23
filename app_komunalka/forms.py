@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -17,20 +18,74 @@ class UserCreateForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if MyUser.objects.filter(email=email):
+        if MyUser.objects.filter(email=email).exists():
             raise ValidationError('This email is already registered')
         return email
 
-    # def save(self, commit=True):
-    #     user = super(UserCreateForm, self).save(commit=False)
-    #     email = self.cleaned_data.get('email')
-    #     username = email.partition('@')[0]
-    #     if commit:
-    #         user.username = username
-    #         user.save()
-    #     return user
+    def save(self, commit=True):
+        user = super(UserCreateForm, self).save(commit=False)
+        email = self.cleaned_data.get('email')
+        username = email.partition('@')[0]
+        if commit:
+            user.username = username
+            user.save()
+        return user
 
-    """НУЖНО проверить метод save(), чтобы сохранялся юзернейм от пароля до собачки в нём!!!!"""
+
+# class LoginForm(forms.ModelForm):
+#     # username = forms.CharField(label='login', widget=forms.HiddenInput(), required=False)
+#     email = forms.EmailField(label="E-MAIL", widget=forms.EmailInput())
+#     password = forms.CharField(label="password", widget=forms.PasswordInput())
+#     class Meta:
+#         model = MyUser
+#         fields = ['email', 'password']
+#
+#     def clean(self):
+#         return self.cleaned_data
+
+class LoginForm(AuthenticationForm):
+    email = forms.EmailField(label="E-mail", widget=forms.EmailInput())
+    username = forms.CharField(label='login', widget=forms.HiddenInput(), required=False)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput())
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        valid_email = MyUser.objects.filter(email=email).exists()
+        if valid_email:
+            username = MyUser.objects.get(email=email).username
+            password = self.cleaned_data.get('password')
+            if username is not None and password:
+                self.user_cache = authenticate(
+                    self.request, username=username, password=password
+                )
+                if self.user_cache is None:
+                    raise self.get_invalid_login_error()
+                else:
+                    self.confirm_login_allowed(self.user_cache)
+
+        else:
+            raise ValidationError('msg')
+            return self.cleaned_data
+        return self.cleaned_data
+
+    # def clean_email(self):
+    #     email = self.cleaned_data.get('email')
+    #     if not MyUser.objects.filter(email=email).exists():
+    #         raise ValidationError('This email is not registered')
+    #     return email
+    #
+    # def clean_username(self):
+    #     email = self.clean_email()
+    #     user_instance = MyUser.objects.get(email=email)
+    #     username = user_instance.username
+    #     # password = user_instance.password
+    #     # self.user_cache = authenticate(self.request, username=username, password=password)
+    #     if not username:
+    #         raise ValidationError('This email is not registered')
+    #     return username
+
+
+
 
 
 

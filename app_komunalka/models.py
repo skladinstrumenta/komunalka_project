@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.expressions import d
 
 
 class MyUser(AbstractUser):
@@ -14,7 +15,7 @@ class MyUser(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return self.email
+        return self.username
 
 
 class Adress(models.Model):
@@ -68,7 +69,7 @@ class KomunalData(models.Model):
         verbose_name_plural = "Показания счётчиков"
 
     def __str__(self):
-        return f'{self.date_create.date()} - ' \
+        return f'{self.date_create.strftime("%d.%m.%y %H:%M")} - ' \
                f'{self.adress.city}/{self.adress.street}/{self.adress.house}' \
                f'-{self.adress.corps if self.adress.corps else ""}' \
                f'/кв{self.adress.room if self.adress.room else ""} '
