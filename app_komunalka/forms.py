@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.core.exceptions import ValidationError
 
-from app_komunalka.models import MyUser
+from app_komunalka.models import MyUser, KomunalData
 
 
 class UserCreateForm(UserCreationForm):
@@ -85,6 +85,10 @@ class LoginForm(AuthenticationForm):
     #     return username
 
 
+class DataCreateForm(forms.ModelForm):
+    class Meta:
+        model = KomunalData
+        fields = '__all__'
 
 
 

@@ -2,8 +2,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, ListView
-from app_komunalka.forms import UserCreateForm, LoginForm
+from app_komunalka.forms import UserCreateForm, LoginForm, DataCreateForm
 from app_komunalka.models import MyUser, KomunalData
 
 
@@ -55,13 +56,19 @@ class LogoutUser(LogoutView):
     next_page = '/'
 
 
-class CreateNewKomubalDataView(CreateView):
-    pass
-
-
 class KomunalDataListView(ListView):
     model = KomunalData
     template_name = 'komunaldata.html'
+    context_object_name = 'data_list'
+    paginate_by = 5
 
+
+class CreateNewKomubalDataView(CreateView):
+    model = KomunalData
+    template_name = 'NewData.html'
+    # form_class = DataCreateForm
+    model = KomunalData
+    fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon', 'komunaldata_dateoff']
+    success_url = reverse_lazy('kd_list')
 
 

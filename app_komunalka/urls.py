@@ -4,6 +4,7 @@ from app_komunalka.views import *
 
 urlpatterns = [
     path('', HomePage.as_view(), name='home'),
+    path('new-data', CreateNewKomubalDataView.as_view(), name='new_data'),
     path('index', IndexPage.as_view(), name='index'),
     path('register', RegistrationNewUserView.as_view(), name='register'),
     path('login', LoginUser.as_view(), name='login'),
