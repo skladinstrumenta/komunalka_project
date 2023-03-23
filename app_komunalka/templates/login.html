@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+        <div class="login_form"><h4>{{ login_form.email.label }}: {{ login_form.email }}</h4></div>
+        <div class="login_form"><h4>{{ login_form.password.label }}: {{ login_form.password }}</h4></div>
+{#        {% for f in login_form %}#}
+{#            {% if f.label == "e-mail" or f.label == 'password'%}#}
+{#                <p><label class="form-label">{{ f.label }}:</label>{{ f }} </p>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+
+
+{#        {% for f in login_form %}#}
+{#            {{ f }}#}
+{#        {% endfor %}#}
+{#                {{ form.as_p }}#}
+        <input type="submit" value="Login">
+    </form>
+{% endblock %}
