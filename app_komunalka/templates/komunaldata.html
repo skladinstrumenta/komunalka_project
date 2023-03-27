@@ -2,7 +2,7 @@
 {% block content %}
     <div class="komunaldata">
         {% for obj in data_list %}
-            <h3>{{ obj.date_create }} ___ по адрессу ___ {{ obj.gas }}</h3>
+            <h3>{{ obj.date_create }} ___ по адрессу ___ {{ obj.gas }}<br>ИТОГО: {{ obj.result }} грн.</h3>
         {% endfor %}
     </div>
     <br><br><br>

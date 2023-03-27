@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, ListView
 from app_komunalka.forms import UserCreateForm, LoginForm, DataCreateForm
-from app_komunalka.models import MyUser, KomunalData
+from app_komunalka.models import MyUser, KomunalData, Adress
 
 
 class HomePage(TemplateView):
@@ -71,4 +71,16 @@ class CreateNewKomubalDataView(CreateView):
     fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon', 'komunaldata_dateoff']
     success_url = reverse_lazy('kd_list')
 
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        adress = obj.adress.id
+        adress_obj = Adress.objects.get(pk=adress)
+        sum_gas = obj.gas * adress_obj.tarif_gas + adress_obj.tarif_delivery_gas
+        sum_water = obj.water * adress_obj.tarif_water
+        sum_light = obj.light * adress_obj.tarif_light
+        result_list = [sum_gas, sum_water, sum_light, adress_obj.tarif_musor, adress_obj.tarif_obsg]
+        obj.result = sum(result_list)
+        obj.save()
+        
+        return super(CreateNewKomubalDataView, self).form_valid(form)
 
