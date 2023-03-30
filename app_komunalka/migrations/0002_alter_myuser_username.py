@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app_komunalka', '0001_initial'),
+        ('css', '0001_initial'),
     ]
 
     operations = [

@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('summ_of_repayment', models.DecimalField(decimal_places=2, default=0, max_digits=10)),
                 ('date_of_repayment', models.DateTimeField(auto_now_add=True)),
-                ('adress', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app_komunalka.adress', verbose_name='Aдрес')),
+                ('adress', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='css.adress', verbose_name='Aдрес')),
             ],
             options={
                 'verbose_name_plural': 'Погашения задолженностей',
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
                 ('date_create', models.DateTimeField(auto_now_add=True)),
                 ('date_update', models.DateTimeField(auto_now=True)),
                 ('result', models.FloatField(blank=True, null=True, verbose_name='Итого, грн')),
-                ('adress', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='adress_komunaldata', to='app_komunalka.adress', verbose_name='Адрес')),
+                ('adress', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='adress_komunaldata', to='css.adress', verbose_name='Адрес')),
             ],
             options={
                 'verbose_name_plural': 'Показания счётчиков',
