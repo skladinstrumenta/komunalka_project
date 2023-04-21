@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -58,14 +60,16 @@ class KomunalData(models.Model):
     light = models.PositiveIntegerField()
     adress = models.ForeignKey(Adress, related_name='adress_komunaldata', verbose_name='Адрес',
                                on_delete=models.CASCADE)
-    komunaldata_dateon = models.DateField(verbose_name="Дата начала начисления")
-    komunaldata_dateoff = models.DateField(verbose_name="Дата завершения начисления")
+    komunaldata_dateon = models.DateField(verbose_name="Данные за месяц", blank=True, null=True,
+                                          default=datetime.date.today())
+    # komunaldata_dateoff = models.DateField(verbose_name="Дата завершения начисления")
+
     date_create = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
     result = models.FloatField(blank=True, null=True, verbose_name="Итого, грн")
 
     class Meta:
-        ordering = ['date_update', 'date_create']
+        ordering = ['-date_update', '-date_create']
         verbose_name_plural = "Показания счётчиков"
 
     def __str__(self):

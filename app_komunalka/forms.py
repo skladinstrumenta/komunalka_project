@@ -1,9 +1,14 @@
+from datetime import datetime
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.core.exceptions import ValidationError
 
-from app_komunalka.models import MyUser, KomunalData
+from app_komunalka.models import MyUser, KomunalData, Adress
+
+years_list = list(range(datetime.now().year - 100, datetime.now().year + 1, -1))
+now = datetime.now()
 
 
 class UserCreateForm(UserCreationForm):
@@ -86,10 +91,44 @@ class LoginForm(AuthenticationForm):
 
 
 class DataCreateForm(forms.ModelForm):
+    komunaldata_dateon = forms.DateField(label='Дата начисления',
+                                         initial=datetime.today(),
+                                         widget=forms.SelectDateWidget(years=years_list))
+    # komunaldata_dateoff = forms.DateField(label='Дата завершения начисления',
+    #                                       widget=forms.SelectDateWidget(years=years_list))
     class Meta:
         model = KomunalData
-        fields = '__all__'
+        fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon']
+        # fields = ['gas', 'water', 'light', 'adress']
 
+        # def clean_gas(self):
+        #     gas = self.cleaned_data.get('gas')
+        #     if not gas % 2:
+        #         raise ValidationError('fuck')
+        #     return gas
+
+    def clean(self):
+        gas = self.cleaned_data.get('gas')
+        water = self.cleaned_data.get('water')
+        if gas < 0:
+            raise ValidationError('fuck gas')
+        # elif not water % 2:
+        #     raise ValidationError('fuck water')
+        # return gas
+
+
+# class DataUpdateForm(DataCreateForm):
+#     class Meta:
+#         model = KomunalData
+#         # fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon']
+#         fields = '__all__'
+
+class NewAdressForm(forms.ModelForm):
+
+    class Meta:
+        model = Adress
+        fields = '__all__'
+        # exclude = 'user'
 
 
 

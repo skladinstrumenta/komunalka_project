@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
+from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, FormView, ListView
-from app_komunalka.forms import UserCreateForm, LoginForm, DataCreateForm
+from django.views.generic import TemplateView, CreateView, FormView, ListView, UpdateView, DeleteView
+from app_komunalka.forms import UserCreateForm, LoginForm, DataCreateForm, NewAdressForm
 from app_komunalka.models import MyUser, KomunalData, Adress
 
 
@@ -60,27 +61,85 @@ class KomunalDataListView(ListView):
     model = KomunalData
     template_name = 'komunaldata.html'
     context_object_name = 'data_list'
-    paginate_by = 5
+    paginate_by = 3
+    new_obj = KomunalData.objects.all()[0]
+    last_obj = KomunalData.objects.all()[1]
+    diference_obj = {'gas': (new_obj.gas - last_obj.gas),
+                     'water': (new_obj.water - last_obj.water),
+                     'light': (new_obj.light - last_obj.light)}
+
+    extra_context = {'dif_obj': diference_obj}
+
+    def get_queryset(self):
+        # if not self.request.user.is_superuser:
+        #     queryset = KomunalData.objects.filter(adress__user=self.request.user)
+        #     return queryset
+        # queryset = KomunalData.objects.all()
+        queryset = KomunalData.objects.filter(adress__user=self.request.user)
+        return queryset
 
 
 class CreateNewKomubalDataView(CreateView):
-    model = KomunalData
+    # model = KomunalData
     template_name = 'NewData.html'
-    # form_class = DataCreateForm
-    model = KomunalData
-    fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon', 'komunaldata_dateoff']
+    form_class = DataCreateForm
+    # model = KomunalData
+    # fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon', 'komunaldata_dateoff']
     success_url = reverse_lazy('kd_list')
 
     def form_valid(self, form):
         obj = form.save(commit=False)
         adress = obj.adress.id
         adress_obj = Adress.objects.get(pk=adress)
-        sum_gas = obj.gas * adress_obj.tarif_gas + adress_obj.tarif_delivery_gas
-        sum_water = obj.water * adress_obj.tarif_water
-        sum_light = obj.light * adress_obj.tarif_light
-        result_list = [sum_gas, sum_water, sum_light, adress_obj.tarif_musor, adress_obj.tarif_obsg]
-        obj.result = sum(result_list)
+        qyeryset = KomunalData.objects.filter(adress=adress_obj)
+        if qyeryset:
+            last_obj = qyeryset.first()
+            diference_gas = obj.gas - last_obj.gas
+            diference_water = obj.water - last_obj.water
+            diference_light = obj.light - last_obj.light
+            sum_gas = diference_gas * adress_obj.tarif_gas + adress_obj.tarif_delivery_gas
+            if sum_gas < 0:
+                raise ValidationError("New Gas < Last Gas")
+            sum_water = diference_water * adress_obj.tarif_water
+            sum_light = diference_light * adress_obj.tarif_light
+            result_list = [sum_gas, sum_water, sum_light, adress_obj.tarif_musor, adress_obj.tarif_obsg]
+            obj.result = sum(result_list)
+        else:
+            obj.result = 0
         obj.save()
         
         return super(CreateNewKomubalDataView, self).form_valid(form)
 
+
+class UpdateKomunalData(UpdateView):
+    model = KomunalData
+    form_class = DataCreateForm
+    template_name = "update_kdata.html"
+    success_url = reverse_lazy('kd_list')
+
+
+class DeleteKomunalData(DeleteView):
+    model = KomunalData
+    success_url = reverse_lazy('kd_list')
+
+
+class AdressListView(ListView):
+    model = Adress
+    template_name = 'adresslist.html'
+    context_object_name = 'adress_list'
+
+    def get_queryset(self):
+        queryset = Adress.objects.filter(user=self.request.user)
+        return queryset
+
+class AdressCreateView(CreateView):
+    template_name = 'Newadress.html'
+    form_class = NewAdressForm
+    success_url = '/'
+
+
+class AdressUpdateView(UpdateView):
+    model = Adress
+    form_class = NewAdressForm
+    # fields = '__all__'
+    success_url = reverse_lazy('home')

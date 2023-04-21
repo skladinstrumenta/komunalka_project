@@ -2,7 +2,25 @@
 {% block content %}
     <div class="komunaldata">
         {% for obj in data_list %}
-            <h3>{{ obj.date_create }} ___ по адрессу ___ {{ obj.gas }}<br>ИТОГО: {{ obj.result }} грн.</h3>
+            <a href="{% url 'update_kdata' obj.id %}"><div class="kdata_obj">
+                <h4>ID ___ {{ obj.id }} ___ {{ obj.date_create }} ___ по адрессу ___ {{ obj.adress }}</h4>
+{#                    <h5>Показания Счётчика Газа: {{ obj.gas }}</h5>#}
+{#                    <h5>Показания Счётчика Воды: {{ obj.water }}</h5>#}
+{#                    <h5>Показания Счётчика Света: {{ obj.light }}</h5>#}
+                <h5>Газ - {{ obj.gas }} (+{{ dif_obj.gas }}) //
+                    Вода - {{ obj.water }} (+{{ dif_obj.water }})
+                    // Свет - {{ obj.light }} (+{{ dif_obj.light }})</h5>
+{#                <h4>{{ dif_obj.dif_water }}</h4>#}
+                    <h3>ИТОГО: {{ obj.result }} грн.</h3>
+            </div></a>
+            <form method="get" action="{% url 'update_kdata' obj.id %}">
+                {% csrf_token %}
+                <button type="submit">Update</button>
+            </form>
+            <form method="post" action="{% url 'delete_kdata' obj.id %}">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
         {% endfor %}
     </div>
     <br><br><br>
