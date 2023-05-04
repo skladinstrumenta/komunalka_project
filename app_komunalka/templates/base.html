@@ -8,14 +8,21 @@
 </head>
 <body>
 {% block header %}
-    <h1>{{ user.username }} _____ {{ user.id }}</h1>
+    {% if user.is_authenticated %}
+        <h1>{{ user.username }} _____ {{ user.id }}</h1>
+    {% else %}
+        <h1>Вы не авторизированый пользователь</h1>
+    {% endif %}
+
     <div><a href="{% url 'home' %}">Home</a></div>
-    <div><a href="{% url 'login' %}">Login</a></div>
-    <div><a href="{% url 'logout' %}">Logout</a></div>
-    <div><a href="{% url 'kd_list' %}">KD-LIST</a></div>
-    <div><a href="{% url 'new_data' %}">NEW_DATA</a></div>
-    <div><a href="{% url 'adress_list' %}">ADRESS_LIST</a></div>
-    <div><a href="{% url 'new_adress' %}">NEW_ADRESS</a></div>
+    {% if not user.is_authenticated %}
+        <div><a href="{% url 'login' %}">Login</a></div>
+        <div><a href="{% url 'register' %}">SIGN in</a></div>
+    {% else %}
+        <div><a href="{% url 'logout' %}">Logout</a></div>
+        <div><a href="{% url 'kd_list' %}">Список данных</a></div>
+        <div><a href="{% url 'adress_list' %}">Мои адреса</a></div>
+    {% endif %}
 {% endblock %}
 {% block content %}
 {% endblock %}

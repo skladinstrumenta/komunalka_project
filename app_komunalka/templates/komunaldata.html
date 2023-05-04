@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div><a href="{% url 'new_data' %}">Добавить Новые данные</a></div>
     <div class="komunaldata">
         {% for obj in data_list %}
             <a href="{% url 'update_kdata' obj.id %}"><div class="kdata_obj">

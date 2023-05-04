@@ -42,6 +42,7 @@ class Adress(models.Model):
         ordering = ['country', 'city', 'street', 'house', 'corps', 'room']
         verbose_name = "Адрес"
         verbose_name_plural = "Адреса"
+        unique_together = ['country', 'city', 'street', 'house', 'room']
 
     def __str__(self):
         if self.corps and self.room:

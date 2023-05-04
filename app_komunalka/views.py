@@ -64,11 +64,12 @@ class KomunalDataListView(ListView):
     paginate_by = 3
     new_obj = KomunalData.objects.all()[0]
     last_obj = KomunalData.objects.all()[1]
-    diference_obj = {'gas': (new_obj.gas - last_obj.gas),
-                     'water': (new_obj.water - last_obj.water),
-                     'light': (new_obj.light - last_obj.light)}
+    # diference_obj = {'gas': (new_obj.gas - last_obj.gas),
+    #                  'water': (new_obj.water - last_obj.water),
+    #                  'light': (new_obj.light - last_obj.light)}
+    #
+    # extra_context = {'dif_obj': diference_obj}
 
-    extra_context = {'dif_obj': diference_obj}
 
     def get_queryset(self):
         # if not self.request.user.is_superuser:
@@ -77,6 +78,19 @@ class KomunalDataListView(ListView):
         # queryset = KomunalData.objects.all()
         queryset = KomunalData.objects.filter(adress__user=self.request.user)
         return queryset
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(KomunalDataListView, self).get_context_data(**kwargs)
+        user = self.request.user
+        queryset = KomunalData.objects.filter(adress__user=user)
+        if len(queryset) > 1:
+            new_obj = queryset[0]
+            last_obj = queryset[1]
+            diference_obj = {'gas': (new_obj.gas - last_obj.gas),
+                             'water': (new_obj.water - last_obj.water),
+                             'light': (new_obj.light - last_obj.light)}
+            context['dif_obj'] = diference_obj
+        return context
 
 
 class CreateNewKomubalDataView(CreateView):
