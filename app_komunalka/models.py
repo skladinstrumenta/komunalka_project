@@ -81,7 +81,7 @@ class KomunalData(models.Model):
 
 
 class Repayment(models.Model):
-    adress = models.ForeignKey(Adress, verbose_name='Aдрес', on_delete=models.CASCADE)
+    adress = models.ForeignKey(Adress, related_name="adress_repayment", verbose_name='Aдрес', on_delete=models.CASCADE)
     summ_of_repayment = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     date_of_repayment = models.DateTimeField(auto_now_add=True)
 

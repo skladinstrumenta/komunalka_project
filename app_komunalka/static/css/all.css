@@ -5,3 +5,14 @@ body {
     margin-top: 15px;
     border: 1px solid yellow;
 }
+.adress_obj {
+    color: darkred;
+}
+a{
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+    line-height: 17px;
+    font-weight: bold;
+}

@@ -2,7 +2,11 @@
 {% block content %}
     <div><a href="{% url 'new_adress' %}">Добавить новый адресс</a></div>
     {% for adress in adress_list  %}
-        <div class="adress"><li>{{ adress }}_______ {{ adress.id }}</li></div>
+        <a href="{% url 'adress_update' adress.id %}">
+            <div class="adress_obj">
+                <li>{{ adress }}_______ {{ adress.id }}___{{ adress.adress_repayment.first.summ_of_repayment }}</li>
+            </div>
+        </a>
     {% endfor %}
 
 {% endblock %}

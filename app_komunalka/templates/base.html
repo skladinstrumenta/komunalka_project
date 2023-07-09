@@ -10,6 +10,7 @@
 {% block header %}
     {% if user.is_authenticated %}
         <h1>{{ user.username }} _____ {{ user.id }}</h1>
+
     {% else %}
         <h1>Вы не авторизированый пользователь</h1>
     {% endif %}

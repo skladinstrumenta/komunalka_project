@@ -82,13 +82,20 @@ class KomunalDataListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(KomunalDataListView, self).get_context_data(**kwargs)
         user = self.request.user
-        queryset = KomunalData.objects.filter(adress__user=user)
+        queryset = self.get_queryset()
+        # lendd = len(queryset)
         if len(queryset) > 1:
-            new_obj = queryset[0]
-            last_obj = queryset[1]
-            diference_obj = {'gas': (new_obj.gas - last_obj.gas),
-                             'water': (new_obj.water - last_obj.water),
-                             'light': (new_obj.light - last_obj.light)}
+            kol = len(queryset)
+            # index =
+            # index_new_obj = list(queryset).index()
+            index_new_obj = 0
+            obj = queryset[index_new_obj]
+            # index = queryset.index(new_obj)
+            # index_new_object = list(queryset).index(new_obj)
+            next_obj = queryset[index_new_obj + 1]
+            diference_obj = {'gas': (obj.gas - next_obj.gas),
+                             'water': (obj.water - next_obj.water),
+                             'light': (obj.light - next_obj.light)}
             context['dif_obj'] = diference_obj
         return context
 
@@ -155,5 +162,6 @@ class AdressCreateView(CreateView):
 class AdressUpdateView(UpdateView):
     model = Adress
     form_class = NewAdressForm
+    template_name = 'update_adress.html'
     # fields = '__all__'
     success_url = reverse_lazy('home')
