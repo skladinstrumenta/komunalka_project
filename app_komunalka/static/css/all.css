@@ -1,5 +1,15 @@
 body {
-    background-color: #029e74;
+    background-image: url("https://img.freepik.com/premium-photo/savings-electricity-reducing-the-payment-of-utility-bills-a-incandescent-lamp-calculator_486502-1276.jpg");
+    /*background: url("http://127.0.0.1:8000/files///D:/Images/car.jpg");*/
+    background-size: 100%;
+    /*background-color: #029e74;*/
+}
+.newdata {
+    width: 35%;
+    margin: 15px 0px;
+    padding: 20px;
+    background-color: lightgreen;
+    opacity: 80%;
 }
 .kdata_obj {
     margin-top: 15px;

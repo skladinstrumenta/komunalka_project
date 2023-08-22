@@ -15,6 +15,7 @@ urlpatterns = [
     path('komunal_data', KomunalDataListView.as_view(), name='kd_list'),
     path('komunal_data/update/<int:pk>', UpdateKomunalData.as_view(), name='update_kdata'),
     path('komunal_data/delete/<int:pk>', DeleteKomunalData.as_view(), name='delete_kdata'),
+    path('repayment/create/', RepaymentCreateView.as_view(), name='repayment_create')
 
 
     ]

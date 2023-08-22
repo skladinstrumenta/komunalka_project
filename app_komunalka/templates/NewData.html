@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form method="post">
-    {% csrf_token %}
-{#    <div>#}
-{#        {% for f in form %}#}
-{#            {{ f.errors }}#}
-{#        {% endfor %}#}
-{#    </div>#}
-    {{ form.as_p }}
-    <input type="submit" value="Create">
-    </form>
+    <div class="newdata">
+        <form method="post">
+        {% csrf_token %}
+    {#    <div>#}
+    {#        {% for f in form %}#}
+    {#            {{ f.errors }}#}
+    {#        {% endfor %}#}
+    {#    </div>#}
+        {{ form.as_p }}
+        <input type="submit" value="Create">
+        </form>
+    </div>
 {% endblock %}

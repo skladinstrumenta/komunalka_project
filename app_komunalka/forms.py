@@ -96,6 +96,14 @@ class DataCreateForm(forms.ModelForm):
                                          widget=forms.SelectDateWidget(years=years_list))
     # komunaldata_dateoff = forms.DateField(label='Дата завершения начисления',
     #                                       widget=forms.SelectDateWidget(years=years_list))
+
+    # def __init__(self, *args, **kwargs):
+    #     user = kwargs.pop('user', None)
+    #     super(DataCreateForm, self).__init__(*args, **kwargs)
+    #     if user and user.is_authenticated:
+    #         self.fields['adress'].queryset = Adress.objects.filter(user__username='skladinstrumenta23')
+
+
     class Meta:
         model = KomunalData
         fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon']
@@ -117,11 +125,19 @@ class DataCreateForm(forms.ModelForm):
         # return gas
 
 
-# class DataUpdateForm(DataCreateForm):
-#     class Meta:
-#         model = KomunalData
-#         # fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon']
-#         fields = '__all__'
+class DataUpdateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        user_id = user.id
+        super(DataUpdateForm, self).__init__(*args, **kwargs)
+        if user and user.is_authenticated and not user.is_superuser:
+            self.fields['adress'].queryset = Adress.objects.filter(user__id=user_id)
+
+    class Meta:
+        model = KomunalData
+        fields = ['gas', 'water', 'light', 'adress', 'komunaldata_dateon']
+        # fields = '__all__'
 
 class NewAdressForm(forms.ModelForm):
 
