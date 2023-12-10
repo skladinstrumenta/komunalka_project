@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
+{% block tittle %}Список Данных{% endblock %}
 {% block content %}
     <div><a href="{% url 'new_data' %}">Добавить Новые данные</a></div>
     <div class="komunaldata">
         {% for obj in data_list %}
+
+{#            {% cycle obj.id obj.water obj.gas as obj1 silent%}#}
+{#            {{ obj1 }}#}
+{#            {% resetcycle %}#}
+
+{#            {% if forloop.counter0 != 1 %}#}
             <a href="{% url 'update_kdata' obj.id %}"><div class="kdata_obj">
                 <h4>ID ___ {{ obj.id }} ___ {{ obj.date_create }} ___ по адрессу ___ {{ obj.adress }}</h4>
 {#                    <h5>Показания Счётчика Газа: {{ obj.gas }}</h5>#}
@@ -14,6 +21,7 @@
 {#                <h4>{{ dif_obj.dif_water }}</h4>#}
                     <h3>ИТОГО: {{ obj.result }} грн.</h3>
             </div></a>
+
             <form method="get" action="{% url 'update_kdata' obj.id %}">
                 {% csrf_token %}
                 <button type="submit">Update</button>
@@ -22,6 +30,9 @@
                 {% csrf_token %}
                 <button type="submit">Delete</button>
             </form>
+{#            {% endif %}#}
+
+
         {% endfor %}
     </div>
     <br><br><br>

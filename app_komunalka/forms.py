@@ -94,6 +94,13 @@ class DataCreateForm(forms.ModelForm):
     komunaldata_dateon = forms.DateField(label='Дата начисления',
                                          initial=datetime.today(),
                                          widget=forms.SelectDateWidget(years=years_list))
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        user_id = user.id
+        super().__init__(*args, **kwargs)
+        if user and user.is_authenticated and not user.is_superuser:
+            self.fields['adress'].queryset = Adress.objects.filter(user__id=user_id)
     # komunaldata_dateoff = forms.DateField(label='Дата завершения начисления',
     #                                       widget=forms.SelectDateWidget(years=years_list))
 
@@ -102,7 +109,6 @@ class DataCreateForm(forms.ModelForm):
     #     super(DataCreateForm, self).__init__(*args, **kwargs)
     #     if user and user.is_authenticated:
     #         self.fields['adress'].queryset = Adress.objects.filter(user__username='skladinstrumenta23')
-
 
     class Meta:
         model = KomunalData

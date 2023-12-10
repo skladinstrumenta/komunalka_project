@@ -4,9 +4,20 @@
     <meta charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/all.css' %}">
-    <title>KOMUNALKA</title>
+    <title>{% block tittle %}KOMUNALKA{% endblock %}</title>
 </head>
+
 <body>
+
+
+{#***********************#}
+{#/*Если хочешь поменять класс от условия*/#}
+{#{% if user.id == 33 %}#}
+{#    <body class="qqq"></body>#}
+{#{% endif %}#}
+{#******************#}
+
+
 {% block header %}
     {% if user.is_authenticated %}
         <h1>{{ user.username }} _____ {{ user.id }}</h1>

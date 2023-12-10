@@ -4,6 +4,16 @@ body {
     background-size: 100%;
     /*background-color: #029e74;*/
 }
+
+
+/***************/
+/*Если хочешь поменять класс от условия*/
+/*body.qqq {*/
+/*    background: darkred;*/
+/*}*/
+/******************/
+
+
 .newdata {
     width: 35%;
     margin: 15px 0px;

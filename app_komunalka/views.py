@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, FormView, ListView, UpdateView, DeleteView
+from django.views.generic.edit import ModelFormMixin
+
 from app_komunalka.forms import UserCreateForm, LoginForm, DataCreateForm, NewAdressForm, DataUpdateForm
 from app_komunalka.models import MyUser, KomunalData, Adress, Repayment
 
@@ -13,7 +15,13 @@ class HomePage(TemplateView):
     template_name = 'home.html'
     
 
-class AddUserInFormMixin(UpdateView):
+# class AddUserInFormMixin(UpdateView):
+#     def get_form_kwargs(self):
+#         kwargs = super().get_form_kwargs()
+#         kwargs.update(user=self.request.user)
+#         return kwargs
+
+class AddUserInFormMixin(ModelFormMixin):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(user=self.request.user)
@@ -69,8 +77,8 @@ class KomunalDataListView(ListView):
     template_name = 'komunaldata.html'
     context_object_name = 'data_list'
     paginate_by = 3
-    new_obj = KomunalData.objects.all()[0]
-    last_obj = KomunalData.objects.all()[1]
+    # new_obj = KomunalData.objects.all()[0]
+    # last_obj = KomunalData.objects.all()[1]
     # diference_obj = {'gas': (new_obj.gas - last_obj.gas),
     #                  'water': (new_obj.water - last_obj.water),
     #                  'light': (new_obj.light - last_obj.light)}
@@ -90,15 +98,14 @@ class KomunalDataListView(ListView):
         context = super(KomunalDataListView, self).get_context_data(**kwargs)
         user = self.request.user
         queryset = self.get_queryset()
-        # lendd = len(queryset)
         if len(queryset) > 1:
             kol = len(queryset)
             # index =
             # index_new_obj = list(queryset).index()
             index_new_obj = 0
+            # index_new_obj = queryset.index()
             obj = queryset[index_new_obj]
-            # index = queryset.index(new_obj)
-            # index_new_object = list(queryset).index(new_obj)
+            # obj_n = queryset.get(id=object_list.first())
             next_obj = queryset[index_new_obj + 1]
             diference_obj = {'gas': (obj.gas - next_obj.gas),
                              'water': (obj.water - next_obj.water),
@@ -107,7 +114,7 @@ class KomunalDataListView(ListView):
         return context
 
 
-class CreateNewKomubalDataView(CreateView):
+class CreateNewKomubalDataView(AddUserInFormMixin, CreateView):
     # model = KomunalData
     template_name = 'NewData.html'
     form_class = DataCreateForm
@@ -129,7 +136,7 @@ class CreateNewKomubalDataView(CreateView):
             sum_water = diference_water * adress_obj.tarif_water
             sum_light = diference_light * adress_obj.tarif_light
             result_list = [sum_gas, sum_water, sum_light, adress_obj.tarif_musor, adress_obj.tarif_obsg]
-            obj.result = sum(result_list)
+            obj.result = round(sum(result_list), 2)
         else:
             obj.result = 0
         obj.save()
@@ -137,7 +144,7 @@ class CreateNewKomubalDataView(CreateView):
         return super(CreateNewKomubalDataView, self).form_valid(form)
 
 
-class UpdateKomunalData(AddUserInFormMixin):
+class UpdateKomunalData(AddUserInFormMixin, UpdateView):
     model = KomunalData
     form_class = DataUpdateForm
     template_name = "update_kdata.html"
